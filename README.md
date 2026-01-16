@@ -1,4 +1,4 @@
-﻿# Food Mall QR Ordering (Rebuilt)
+# Food Mall QR Ordering (Rebuilt)
 
 ## Quick start
 
