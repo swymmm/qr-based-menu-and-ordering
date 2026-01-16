@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Codes</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>QR Codes (Outlet 1)</h2>
+
+    {% for t in range(1, 11) %}
+        <div class="card" style="display:inline-block; margin:15px; text-align:center;">
+            <img src="/static/qr/table_{{ t }}_outlet_1.png" width="200">
+            <p><b>Table {{ t }}</b></p>
+        </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>
+

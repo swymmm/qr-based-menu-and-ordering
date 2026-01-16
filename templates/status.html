@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Status</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="status-page">
+
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+<div class="ambient-orb orb-3"></div>
+
+<div class="menu-shell">
+    <header class="menu-hero">
+        <div class="hero-text">
+            <p class="eyebrow">Order Tracker</p>
+            <h1>Your order is on the way</h1>
+            <p class="subtext">Track your order status in real time.</p>
+            <div class="hero-status">
+                <span class="live-dot"></span>
+                <span>Live kitchen updates</span>
+                <span class="refresh-note">Auto-refresh every 3 seconds</span>
+            </div>
+        </div>
+
+        <div class="hero-card">
+            <div class="order-top">
+                <div>
+                    <p class="label">Order</p>
+                    <p class="value">#{{ order["order_id"] }}</p>
+                </div>
+                <div>
+                    <p class="label">Table</p>
+                    <p class="value">{{ order["table_no"] }}</p>
+                </div>
+            </div>
+
+            <div class="order-status">
+                <p class="label">Status</p>
+                <span id="order-status" class="status-pill {{ order['status']|lower }}">
+                    {{ order["status"] }}
+                </span>
+            </div>
+
+            <div class="order-notes">
+                <p>Total paid: Rs {{ order["total_amount"] }}</p>
+                {% if payment %}
+                <p>Payment: {{ payment["method"] }} · {{ payment["status"] }}</p>
+                {% endif %}
+                <p id="notify" class="notify" aria-live="polite"></p>
+            </div>
+        </div>
+    </header>
+
+    <section class="menu-grid">
+        {% for item in items %}
+            <article class="menu-item" style="--delay: {{ loop.index0 * 0.08 }}s;">
+                <div class="item-body">
+                    <h3>{{ item["item_name"] }}</h3>
+                    <p class="item-desc">Qty {{ item["quantity"] }} · Rs {{ item["price"] }}</p>
+                    <div class="item-meta">
+                        <span class="price">Rs {{ item["line_total"] }}</span>
+                        <span class="meta-chip">Order item</span>
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
+    </section>
+
+    <footer class="menu-footer">
+        <p>Need help? Tap the counter or call a server for quick support.</p>
+        <p class="footer-note">Food Mall Live</p>
+    </footer>
+</div>
+
+<script>
+    const orderId = {{ order["order_id"] }};
+    let notified = false;
+
+    setInterval(() => {
+        fetch(`/api/status/${orderId}`)
+            .then(res => res.json())
+            .then(data => {
+                const statusEl = document.getElementById("order-status");
+                statusEl.textContent = data.status;
+                statusEl.className = `status-pill ${data.status.toLowerCase()}`;
+
+                if (data.status === "Ready" && !notified) {
+                    document.getElementById("notify").innerText =
+                        "Your order is ready. Please collect at the counter.";
+                    alert("Your order is ready.");
+                    notified = true;
+                }
+            });
+    }, 3000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Kitchen Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="premium-page">
+
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+<div class="ambient-orb orb-3"></div>
+
+<div class="premium-shell">
+    <nav class="nav-bar">
+        <div class="brand">Kitchen Dashboard</div>
+        <div class="nav-links">
+            <span class="nav-pill">Outlet {{ outlet_id }}</span>
+            <a href="/login">Logout</a>
+        </div>
+    </nav>
+
+    <section class="dashboard-hero">
+        <div>
+            <p class="eyebrow">Live Kitchen</p>
+            <h1>Orders in progress</h1>
+            <p class="subtext">Update order status as you prepare each ticket.</p>
+        </div>
+        <div class="panel highlight-panel">
+            <p class="label">Active Orders</p>
+            <p class="value">{{ orders|length }}</p>
+            <p class="note">Latest orders shown first.</p>
+        </div>
+    </section>
+
+    <section class="order-grid">
+        {% if orders %}
+            {% for order in orders %}
+            <article class="order-tile">
+                <div class="order-header">
+                    <div>
+                        <p class="label">Order</p>
+                        <p class="value">#{{ order["order_id"] }}</p>
+                    </div>
+                    <span class="status-pill {{ order['status']|lower }}">
+                        {{ order["status"] }}
+                    </span>
+                </div>
+
+                <div class="order-body">
+                    <div class="meta-line">
+                        <span>Table</span>
+                        <strong>{{ order["table_no"] }}</strong>
+                    </div>
+                    <div class="meta-line">
+                        <span>Total</span>
+                        <strong>Rs {{ order["total_amount"] }}</strong>
+                    </div>
+                    <div class="meta-line">
+                        <span>Placed</span>
+                        <strong>{{ order["created_at"] }}</strong>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Items</h3>
+                    {% for item in order_items_map.get(order["order_id"], []) %}
+                        <div class="meta-line">
+                            <span>{{ item["item_name"] }}</span>
+                            <strong>x{{ item["quantity"] }}</strong>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <form method="POST" action="/update/{{ order['order_id'] }}" class="action-buttons">
+                    <button class="pill-button" type="submit" name="status" value="Preparing">Preparing</button>
+                    <button class="pill-button" type="submit" name="status" value="Ready">Ready</button>
+                    <button class="pill-button" type="submit" name="status" value="Completed">Completed</button>
+                </form>
+            </article>
+            {% endfor %}
+        {% else %}
+            <div class="panel empty-state">
+                <h3>No active orders</h3>
+                <p class="subtext">New orders will appear here once guests place them.</p>
+            </div>
+        {% endif %}
+    </section>
+</div>
+
+</body>
+</html>

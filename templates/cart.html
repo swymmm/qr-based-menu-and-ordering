@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Cart</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="premium-page">
+
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+<div class="ambient-orb orb-3"></div>
+
+<div class="premium-shell">
+    <nav class="nav-bar">
+        <div class="brand">Food Mall</div>
+        <div class="nav-links">
+            <a href="/">Welcome</a>
+            <a href="/checkout">Checkout</a>
+        </div>
+    </nav>
+
+    <section class="dashboard-hero">
+        <div>
+            <p class="eyebrow">Cart</p>
+            <h1>Review your order</h1>
+            <p class="subtext">Update quantities or proceed to payment.</p>
+        </div>
+        <div class="panel highlight-panel">
+            <p class="label">Total</p>
+            <p class="value">Rs {{ total }}</p>
+            <p class="note">Subtotal Rs {{ subtotal }} · Tax Rs {{ tax }}</p>
+        </div>
+    </section>
+
+    {% if cart_items %}
+    <section class="panel">
+        <form method="POST" action="/cart/update" class="form-grid">
+            {% for item in cart_items %}
+            <div class="meta-line">
+                <span>{{ item["item_name"] }} (Rs {{ item["price"] }})</span>
+                <input type="number" name="qty_{{ item['item_id'] }}" min="0" value="{{ item['quantity'] }}" required>
+            </div>
+            {% endfor %}
+            <div class="cta-group">
+                <button type="submit" class="primary-button">Update cart</button>
+                <a class="ghost-button" href="/checkout">Proceed to checkout</a>
+            </div>
+        </form>
+    </section>
+    {% else %}
+    <div class="panel empty-state">
+        <h3>Your cart is empty</h3>
+        <p class="subtext">Add items from the menu to continue.</p>
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

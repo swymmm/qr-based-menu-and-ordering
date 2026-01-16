@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Food Mall Outlets</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="premium-page">
+
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+<div class="ambient-orb orb-3"></div>
+
+<div class="premium-shell">
+    <nav class="nav-bar">
+        <div class="brand">Food Mall</div>
+        <div class="nav-links">
+            <a href="/">Welcome</a>
+            <a href="/menu">Menu</a>
+            <a href="/login">Outlet Login</a>
+        </div>
+    </nav>
+
+    <section class="dashboard-hero">
+        <div>
+            <p class="eyebrow">Outlets</p>
+            <h1>Find your nearest Food Mall outlet</h1>
+            <p class="subtext">Explore active outlets and choose the one serving your table.</p>
+        </div>
+    </section>
+
+    <section class="outlet-grid">
+        {% if outlets %}
+            {% for outlet in outlets %}
+            <article class="panel outlet-card">
+                {% if outlet is mapping %}
+                    <h3>{{ outlet.name if outlet.name is defined else "Outlet" }}</h3>
+                    <p>{{ outlet.location if outlet.location is defined else "Location unavailable" }}</p>
+                {% else %}
+                    <h3>{{ outlet }}</h3>
+                    <p>Location unavailable</p>
+                {% endif %}
+            </article>
+            {% endfor %}
+        {% else %}
+            <div class="panel empty-state">
+                <h3>No outlet data</h3>
+                <p class="subtext">Connect outlet data to populate this view.</p>
+            </div>
+        {% endif %}
+    </section>
+</div>
+
+</body>
+</html>
+

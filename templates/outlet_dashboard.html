@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="premium-page">
+
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+<div class="ambient-orb orb-3"></div>
+
+<div class="premium-shell">
+    <nav class="nav-bar">
+        <div class="brand">Food Mall Admin</div>
+        <div class="nav-links">
+            <a href="/">Welcome</a>
+            <a href="/admin/logout">Logout</a>
+        </div>
+    </nav>
+
+    <section class="dashboard-hero">
+        <div>
+            <p class="eyebrow">Admin</p>
+            <h1>Manage outlets, items, and orders</h1>
+            <p class="subtext">Control availability and review recent orders.</p>
+        </div>
+    </section>
+
+    <section class="feature-grid">
+        <div class="panel feature-card">
+            <h3>Add outlet</h3>
+            <form method="POST" action="/admin/outlet/add" class="form-grid">
+                <div class="field-group">
+                    <label>Outlet name</label>
+                    <input type="text" name="outlet_name" required>
+                </div>
+                <div class="field-group">
+                    <label>Category</label>
+                    <input type="text" name="category" required>
+                </div>
+                <button type="submit" class="primary-button">Add outlet</button>
+            </form>
+        </div>
+
+        <div class="panel feature-card">
+            <h3>Add menu item</h3>
+            <form method="POST" action="/admin/item/add" class="form-grid">
+                <div class="field-group">
+                    <label>Item name</label>
+                    <input type="text" name="item_name" required>
+                </div>
+                <div class="field-group">
+                    <label>Description</label>
+                    <input type="text" name="description">
+                </div>
+                <div class="field-group">
+                    <label>Image URL</label>
+                    <input type="text" name="image_url" placeholder="https://...">
+                </div>
+                <div class="field-group">
+                    <label>Price</label>
+                    <input type="number" name="price" min="0" required>
+                </div>
+                <div class="field-group">
+                    <label>Outlet</label>
+                    <select name="outlet_id" required>
+                        {% for outlet in outlets %}
+                        <option value="{{ outlet['outlet_id'] }}">{{ outlet['outlet_name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="primary-button">Add item</button>
+            </form>
+        </div>
+
+        <div class="panel feature-card">
+            <h3>Payment summary</h3>
+            {% if payments_summary %}
+                {% for row in payments_summary %}
+                <div class="meta-line">
+                    <span>{{ row["method"] }}</span>
+                    <strong>{{ row["count"] }} orders · Rs {{ row["total"] }}</strong>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="subtext">No payments yet.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="menu-showcase">
+        <div class="section-title">
+            <h2>Outlets</h2>
+            <p>Toggle outlets on or off.</p>
+        </div>
+        <div class="outlet-grid">
+            {% for outlet in outlets %}
+            <article class="panel">
+                <h3>{{ outlet["outlet_name"] }}</h3>
+                <p class="subtext">{{ outlet["category"] }}</p>
+                <p class="helper">Status: {{ "Active" if outlet["is_active"] == 1 else "Inactive" }}</p>
+                <form method="POST" action="/admin/outlet/toggle/{{ outlet['outlet_id'] }}">
+                    <button type="submit" class="primary-button">Toggle</button>
+                </form>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="menu-showcase">
+        <div class="section-title">
+            <h2>Menu items</h2>
+            <p>Control dish availability.</p>
+        </div>
+        <div class="order-grid">
+            {% for item in items %}
+            <article class="panel">
+                <h3>{{ item["item_name"] }}</h3>
+                <p class="subtext">Outlet: {{ item["outlet_name"] }}</p>
+                <p class="price-tag">Rs {{ item["price"] }}</p>
+                <p class="helper">Status: {{ "Available" if item["is_available"] == 1 else "Hidden" }}</p>
+                {% if item["image_url"] %}
+                <p class="helper">Image: {{ item["image_url"] }}</p>
+                {% endif %}
+                <div class="cta-group">
+                    <form method="POST" action="/admin/item/toggle/{{ item['item_id'] }}">
+                        <button type="submit" class="primary-button">Toggle</button>
+                    </form>
+                    <form method="POST" action="/admin/item/delete/{{ item['item_id'] }}">
+                        <button type="submit" class="danger-button">Delete</button>
+                    </form>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="menu-showcase">
+        <div class="section-title">
+            <h2>Recent orders</h2>
+            <p>Latest 20 orders across outlets.</p>
+        </div>
+        <div class="order-grid">
+            {% if orders %}
+                {% for order in orders %}
+                <article class="panel">
+                    <h3>Order #{{ order["order_id"] }}</h3>
+                    <p class="subtext">Table {{ order["table_no"] }} · Outlet {{ order["outlet_id"] }}</p>
+                    <p class="price-tag">Rs {{ order["total_amount"] }}</p>
+                    <p class="helper">{{ order["status"] }} · {{ order["created_at"] }}</p>
+                </article>
+                {% endfor %}
+            {% else %}
+                <div class="panel empty-state">
+                    <h3>No orders yet</h3>
+                    <p class="subtext">Orders will appear after checkout.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+
+</body>
+</html>

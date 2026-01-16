@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ outlet["outlet_name"] }} Menu</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="premium-page">
+
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+<div class="ambient-orb orb-3"></div>
+
+<div class="premium-shell">
+    <nav class="nav-bar">
+        <div class="brand">Food Mall</div>
+        <div class="nav-links">
+            <a href="/">Welcome</a>
+            <a href="/cart">Cart</a>
+            <a href="/qr">QRs</a>
+        </div>
+    </nav>
+
+    <section class="dashboard-hero">
+        <div>
+            <p class="eyebrow">{{ outlet["category"] }}</p>
+            <h1>{{ outlet["outlet_name"] }}</h1>
+            <p class="subtext">Table {{ table_no if table_no is not none else "-" }} · Freshly prepared order.</p>
+        </div>
+        <div class="panel highlight-panel">
+            <p class="label">Cart total</p>
+            <p class="value">Rs {{ total }}</p>
+            <p class="note">Subtotal Rs {{ subtotal }} · Tax Rs {{ tax }}</p>
+        </div>
+    </section>
+
+    <section class="hero-grid">
+        <div>
+            <div class="section-title">
+                <h2>Menu items</h2>
+                <p>Tap add to cart for your selected items.</p>
+            </div>
+            <div class="dish-grid">
+                {% if items %}
+                    {% for item in items %}
+                    <article class="dish-card">
+                        {% if item["image_url"] %}
+                        <img src="{{ item['image_url'] }}" alt="{{ item['item_name'] }}">
+                        {% endif %}
+                        <div class="dish-body">
+                            <h3>{{ item["item_name"] }}</h3>
+                            <p class="subtext">{{ item["description"] }}</p>
+                            <p class="price-tag">Rs {{ item["price"] }}</p>
+                            <form method="POST" action="/cart/add/{{ item['item_id'] }}" class="form-grid">
+                                <div class="field-group">
+                                    <label>Qty</label>
+                                    <input type="number" name="quantity" min="1" value="1" required>
+                                </div>
+                                <button type="submit" class="primary-button">Add to cart</button>
+                            </form>
+                        </div>
+                    </article>
+                    {% endfor %}
+                {% else %}
+                    <div class="panel empty-state">
+                        <h3>No items available</h3>
+                        <p class="subtext">This outlet has no active items yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Cart summary</h2>
+            {% if cart_items %}
+                {% for item in cart_items %}
+                <div class="meta-line">
+                    <span>{{ item["item_name"] }} × {{ item["quantity"] }}</span>
+                    <strong>Rs {{ item["line_total"] }}</strong>
+                </div>
+                {% endfor %}
+                <div class="meta-line">
+                    <span>Subtotal</span>
+                    <strong>Rs {{ subtotal }}</strong>
+                </div>
+                <div class="meta-line">
+                    <span>Tax</span>
+                    <strong>Rs {{ tax }}</strong>
+                </div>
+                <div class="meta-line">
+                    <span>Total</span>
+                    <strong>Rs {{ total }}</strong>
+                </div>
+                <div class="cta-group">
+                    <a class="primary-button" href="/cart">View cart</a>
+                    <a class="ghost-button" href="/checkout">Checkout</a>
+                </div>
+            {% else %}
+                <p class="subtext">Your cart is empty.</p>
+            {% endif %}
+        </div>
+    </section>
+</div>
+
+</body>
+</html>

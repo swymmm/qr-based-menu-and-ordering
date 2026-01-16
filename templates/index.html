@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Food Mall Welcome</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="premium-page">
+
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+<div class="ambient-orb orb-3"></div>
+
+<div class="premium-shell">
+    <nav class="nav-bar">
+        <div class="brand">Food Mall</div>
+        <div class="nav-links">
+            <a href="/qr">QRs</a>
+            <a href="/login">Outlet Login</a>
+            <a href="/admin/login">Admin</a>
+        </div>
+    </nav>
+
+    <section class="hero-grid">
+        <div class="hero-copy">
+            <p class="eyebrow">Welcome</p>
+            <h1>Scan, choose an outlet, and order instantly</h1>
+            <p class="subtext">Select your table and the outlet you want to order from. Your order goes straight to the kitchen.</p>
+        </div>
+
+        <div class="panel form-panel">
+            <h2>Confirm your table</h2>
+            <form method="GET" action="/" class="form-grid">
+                <div class="field-group">
+                    <label>Table Number</label>
+                    <input type="number" name="table" value="{{ table_no if table_no is not none else '' }}" required>
+                </div>
+                <button type="submit" class="primary-button">Continue</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="menu-showcase">
+        <div class="section-title">
+            <h2>Available outlets</h2>
+            <p>Pick one outlet to start ordering.</p>
+        </div>
+        <div class="dish-grid">
+            {% if outlets %}
+                {% for outlet in outlets %}
+                <article class="dish-card">
+                    <div class="dish-body">
+                        <h3>{{ outlet["outlet_name"] }}</h3>
+                        <p>{{ outlet["category"] }}</p>
+                        <a class="primary-button" href="/menu/{{ outlet['outlet_id'] }}{% if table_no is not none %}?table={{ table_no }}{% endif %}">Open Menu</a>
+                    </div>
+                </article>
+                {% endfor %}
+            {% else %}
+                <div class="panel empty-state">
+                    <h3>No outlets yet</h3>
+                    <p class="subtext">Ask the admin to add outlets first.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+
+</body>
+</html>

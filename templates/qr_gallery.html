@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Table QR Codes</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="premium-page">
+
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+<div class="ambient-orb orb-3"></div>
+
+<div class="premium-shell">
+    <nav class="nav-bar">
+        <div class="brand">Food Mall</div>
+        <div class="nav-links">
+            <a href="/">Welcome</a>
+            <a href="/admin/login">Admin</a>
+        </div>
+    </nav>
+
+    <section class="dashboard-hero">
+        <div>
+            <p class="eyebrow">Table QRs</p>
+            <h1>Printable table QR codes</h1>
+            <p class="subtext">Place one QR on each table so guests can order instantly.</p>
+        </div>
+    </section>
+
+    <section class="dish-grid">
+        {% if qr_items %}
+            {% for qr in qr_items %}
+            <article class="dish-card qr-card">
+                <div class="qr-image">
+                    <img src="{{ qr.url }}" alt="{{ qr.label }}">
+                </div>
+                <div class="dish-body">
+                    <h3>{{ qr.label }}</h3>
+                    <p>Scan to open menu</p>
+                </div>
+            </article>
+            {% endfor %}
+        {% else %}
+            <div class="panel empty-state">
+                <h3>No QR codes found</h3>
+                <p class="subtext">Run generate_qr.py to create table QRs.</p>
+            </div>
+        {% endif %}
+    </section>
+</div>
+
+</body>
+</html>
